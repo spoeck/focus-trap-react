@@ -1,8 +1,9 @@
 {
   "name": "focus-trap-react",
-  "version": "3.0.3",
+  "version": "4.0.0",
   "description": "A React component that traps focus.",
   "main": "dist/focus-trap-react.js",
+  "types": "index.d.ts",
   "scripts": {
     "demo-bundle": "browserify demo/js -t babelify --extension=.jsx -o demo/demo-bundle.js",
     "start": "budo demo/js/index.js:demo-bundle.js --dir demo --live -- -t babelify --extension=.jsx",
@@ -12,12 +13,17 @@
     "jest": "jest",
     "pretest": "npm run lint && npm run build",
     "test": "jest",
-    "prepublish": "npm run build"
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/davidtheclark/focus-trap-react.git"
   },
+  "files": [
+    "dist",
+    "src",
+    "index.d.ts"
+  ],
   "keywords": [
     "react",
     "reactjs",
@@ -46,17 +52,17 @@
     "budo": "^9.4.1",
     "eslint": "^3.13.1",
     "eslint-plugin-react": "^6.10.3",
-    "jest": "^19.0.2",
+    "jest": "^23.4.0",
     "prettier": "^1.2.2",
-    "react": "^15.5.0",
-    "react-dom": "^15.5.0"
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
   },
   "dependencies": {
-    "focus-trap": "^2.0.1"
+    "focus-trap": "^3.0.0"
   },
   "peerDependencies": {
-    "react": "0.14.x || ^15.0.0",
-    "react-dom": "0.14.x || ^15.0.0"
+    "react": "0.14.x || ^15.0.0 || ^16.0.0",
+    "react-dom": "0.14.x || ^15.0.0 || ^16.0.0"
   },
   "babel": {
     "presets": [
@@ -68,7 +74,10 @@
     ]
   },
   "jest": {
-    "testRegex": "/test/.*\\.test.js$",
-    "resetMocks": true
+    "setupFiles": [
+      "<rootDir>/test/jest-setup.js"
+    ],
+    "clearMocks": true,
+    "testURL": "http://localhost"
   }
 }

@@ -503,9 +503,8 @@ function _inherits(subClass, superClass) {
 }
 
 var React = require('react');
+var ReactDOM = require('react-dom');
 var createFocusTrap = require('focus-trap');
-
-var checkedProps = ['active', 'paused', 'tag', 'focusTrapOptions', '_createFocusTrap'];
 
 var FocusTrap = function (_React$Component) {
   _inherits(FocusTrap, _React$Component);
@@ -515,8 +514,8 @@ var FocusTrap = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (FocusTrap.__proto__ || Object.getPrototypeOf(FocusTrap)).call(this, props));
 
-    _this.setNode = function (el) {
-      _this.node = el;
+    _this.setFocusTrapElement = function (element) {
+      _this.focusTrapElement = element;
     };
 
     if (typeof document !== 'undefined') {
@@ -543,7 +542,9 @@ var FocusTrap = function (_React$Component) {
         tailoredFocusTrapOptions[optionName] = specifiedFocusTrapOptions[optionName];
       }
 
-      this.focusTrap = this.props._createFocusTrap(this.node, tailoredFocusTrapOptions);
+      var focusTrapElementDOMNode = ReactDOM.findDOMNode(this.focusTrapElement);
+
+      this.focusTrap = this.props._createFocusTrap(focusTrapElementDOMNode, tailoredFocusTrapOptions);
       if (this.props.active) {
         this.focusTrap.activate();
       }
@@ -555,7 +556,11 @@ var FocusTrap = function (_React$Component) {
     key: 'componentDidUpdate',
     value: function componentDidUpdate(prevProps) {
       if (prevProps.active && !this.props.active) {
-        this.focusTrap.deactivate();
+        var returnFocusOnDeactivate = this.props.focusTrapOptions.returnFocusOnDeactivate;
+
+        var returnFocus = returnFocusOnDeactivate || false;
+        var config = { returnFocus: returnFocus };
+        this.focusTrap.deactivate(config);
       } else if (!prevProps.active && this.props.active) {
         this.focusTrap.activate();
       }
@@ -577,18 +582,20 @@ var FocusTrap = function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
-      var elementProps = {
-        ref: this.setNode
+      var _this2 = this;
+
+      var child = React.Children.only(this.props.children);
+
+      var composedRefCallback = function composedRefCallback(element) {
+        _this2.setFocusTrapElement(element);
+        if (typeof child.ref === 'function') {
+          child.ref(element);
+        }
       };
 
-      // This will get id, className, style, etc. -- arbitrary element props
-      for (var prop in this.props) {
-        if (!this.props.hasOwnProperty(prop)) continue;
-        if (checkedProps.indexOf(prop) !== -1) continue;
-        elementProps[prop] = this.props[prop];
-      }
+      var childWithRef = React.cloneElement(child, { ref: composedRefCallback });
 
-      return React.createElement(this.props.tag, elementProps, this.props.children);
+      return childWithRef;
     }
   }]);
 
@@ -597,7 +604,6 @@ var FocusTrap = function (_React$Component) {
 
 FocusTrap.defaultProps = {
   active: true,
-  tag: 'div',
   paused: false,
   focusTrapOptions: {},
   _createFocusTrap: createFocusTrap
@@ -605,7 +611,7 @@ FocusTrap.defaultProps = {
 
 module.exports = FocusTrap;
 
-},{"focus-trap":25,"react":38}],7:[function(require,module,exports){
+},{"focus-trap":25,"react":38,"react-dom":35}],7:[function(require,module,exports){
 (function (process){
 'use strict';
 

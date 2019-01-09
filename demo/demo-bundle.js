@@ -266,7 +266,6 @@ var DemoFfne = function (_React$Component) {
       var trap = this.state.activeTrap ? React.createElement(
         FocusTrap,
         {
-          className: 'trap',
           focusTrapOptions: {
             onDeactivate: this.unmountTrap,
             initialFocus: '#focused-input',
@@ -274,47 +273,51 @@ var DemoFfne = function (_React$Component) {
           }
         },
         React.createElement(
-          'p',
-          null,
-          'Here is a focus trap',
-          ' ',
+          'div',
+          { className: 'trap' },
           React.createElement(
-            'a',
-            { href: '#' },
-            'with'
+            'p',
+            null,
+            'Here is a focus trap',
+            ' ',
+            React.createElement(
+              'a',
+              { href: '#' },
+              'with'
+            ),
+            ' ',
+            React.createElement(
+              'a',
+              { href: '#' },
+              'some'
+            ),
+            ' ',
+            React.createElement(
+              'a',
+              { href: '#' },
+              'focusable'
+            ),
+            ' ',
+            'parts.'
           ),
-          ' ',
           React.createElement(
-            'a',
-            { href: '#' },
-            'some'
+            'p',
+            null,
+            React.createElement(
+              'label',
+              { htmlFor: 'focused-input', style: { marginRight: 10 } },
+              'Initially focused input'
+            ),
+            React.createElement('input', { ref: 'input', id: 'focused-input' })
           ),
-          ' ',
           React.createElement(
-            'a',
-            { href: '#' },
-            'focusable'
-          ),
-          ' ',
-          'parts.'
-        ),
-        React.createElement(
-          'p',
-          null,
-          React.createElement(
-            'label',
-            { htmlFor: 'focused-input', style: { marginRight: 10 } },
-            'Initially focused input'
-          ),
-          React.createElement('input', { ref: 'input', id: 'focused-input' })
-        ),
-        React.createElement(
-          'p',
-          null,
-          React.createElement(
-            'button',
-            { onClick: this.unmountTrap },
-            'deactivate trap'
+            'p',
+            null,
+            React.createElement(
+              'button',
+              { onClick: this.unmountTrap },
+              'deactivate trap'
+            )
           )
         )
       ) : false;
@@ -406,49 +409,53 @@ var DemoSpecialElement = function (_React$Component) {
         React.createElement(
           FocusTrap,
           {
-            id: 'focus-trap-three',
-            tag: 'section',
-            style: { background: '#eee' },
-            'data-whatever': 'nothing',
             active: this.state.activeTrap,
-            className: trapClass,
             focusTrapOptions: {
               onDeactivate: this.unmountTrap,
               clickOutsideDeactivates: true
             }
           },
           React.createElement(
-            'p',
-            null,
-            'Here is a focus trap',
-            ' ',
+            'section',
+            {
+              id: 'focus-trap-three',
+              style: { background: '#eee' },
+              'data-whatever': 'nothing',
+              className: trapClass
+            },
             React.createElement(
-              'a',
-              { href: '#' },
-              'with'
+              'p',
+              null,
+              'Here is a focus trap',
+              ' ',
+              React.createElement(
+                'a',
+                { href: '#' },
+                'with'
+              ),
+              ' ',
+              React.createElement(
+                'a',
+                { href: '#' },
+                'some'
+              ),
+              ' ',
+              React.createElement(
+                'a',
+                { href: '#' },
+                'focusable'
+              ),
+              ' ',
+              'parts.'
             ),
-            ' ',
             React.createElement(
-              'a',
-              { href: '#' },
-              'some'
-            ),
-            ' ',
-            React.createElement(
-              'a',
-              { href: '#' },
-              'focusable'
-            ),
-            ' ',
-            'parts.'
-          ),
-          React.createElement(
-            'p',
-            null,
-            React.createElement(
-              'button',
-              { onClick: this.unmountTrap },
-              'deactivate trap'
+              'p',
+              null,
+              React.createElement(
+                'button',
+                { onClick: this.unmountTrap },
+                'deactivate trap'
+              )
             )
           )
         )

@@ -27,35 +27,36 @@ class DemoFfne extends React.Component {
   render() {
     const trap = this.state.activeTrap
       ? <FocusTrap
-          className="trap"
           focusTrapOptions={{
             onDeactivate: this.unmountTrap,
             initialFocus: '#focused-input',
             escapeDeactivates: false
           }}
         >
-          <p>
-            Here is a focus trap
-            {' '}
-            <a href="#">with</a>
-            {' '}
-            <a href="#">some</a>
-            {' '}
-            <a href="#">focusable</a>
-            {' '}
-            parts.
-          </p>
-          <p>
-            <label htmlFor="focused-input" style={{ marginRight: 10 }}>
-              Initially focused input
-            </label>
-            <input ref="input" id="focused-input" />
-          </p>
-          <p>
-            <button onClick={this.unmountTrap}>
-              deactivate trap
-            </button>
-          </p>
+          <div className="trap">
+            <p>
+              Here is a focus trap
+              {' '}
+              <a href="#">with</a>
+              {' '}
+              <a href="#">some</a>
+              {' '}
+              <a href="#">focusable</a>
+              {' '}
+              parts.
+            </p>
+            <p>
+              <label htmlFor="focused-input" style={{ marginRight: 10 }}>
+                Initially focused input
+              </label>
+              <input ref="input" id="focused-input" />
+            </p>
+            <p>
+              <button onClick={this.unmountTrap}>
+                deactivate trap
+              </button>
+            </p>
+          </div>
         </FocusTrap>
       : false;
 

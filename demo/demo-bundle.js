@@ -1312,7 +1312,39 @@ module.exports = warning;
 var tabbable = require('tabbable');
 var xtend = require('xtend');
 
-var listeningFocusTrap = null;
+var activeFocusTraps = (function() {
+  var trapQueue = [];
+  return {
+    activateTrap: function(trap) {
+      if (trapQueue.length > 0) {
+        var activeTrap = trapQueue[trapQueue.length - 1];
+        if (activeTrap !== trap) {
+          activeTrap.pause();
+        }
+      }
+
+      var trapIndex = trapQueue.indexOf(trap);
+      if (trapIndex === -1) {
+        trapQueue.push(trap);
+      } else {
+        // move this existing trap to the front of the queue
+        trapQueue.splice(trapIndex, 1);
+        trapQueue.push(trap);
+      }
+    },
+
+    deactivateTrap: function(trap) {
+      var trapIndex = trapQueue.indexOf(trap);
+      if (trapIndex !== -1) {
+        trapQueue.splice(trapIndex, 1);
+      }
+
+      if (trapQueue.length > 0) {
+        trapQueue[trapQueue.length - 1].unpause();
+      }
+    }
+  };
+})();
 
 function focusTrap(element, userOptions) {
   var doc = document;
@@ -1373,6 +1405,8 @@ function focusTrap(element, userOptions) {
     state.active = false;
     state.paused = false;
 
+    activeFocusTraps.deactivateTrap(trap);
+
     var onDeactivate =
       deactivateOptions && deactivateOptions.onDeactivate !== undefined
         ? deactivateOptions.onDeactivate
@@ -1410,10 +1444,7 @@ function focusTrap(element, userOptions) {
     if (!state.active) return;
 
     // There can be only one listening focus trap at a time
-    if (listeningFocusTrap) {
-      listeningFocusTrap.pause();
-    }
-    listeningFocusTrap = trap;
+    activeFocusTraps.activateTrap(trap);
 
     updateTabbableNodes();
 
@@ -1432,15 +1463,13 @@ function focusTrap(element, userOptions) {
   }
 
   function removeListeners() {
-    if (!state.active || listeningFocusTrap !== trap) return;
+    if (!state.active) return;
 
     doc.removeEventListener('focusin', checkFocusIn, true);
     doc.removeEventListener('mousedown', checkPointerDown, true);
     doc.removeEventListener('touchstart', checkPointerDown, true);
     doc.removeEventListener('click', checkClick, true);
     doc.removeEventListener('keydown', checkKey, true);
-
-    listeningFocusTrap = null;
 
     return trap;
   }
@@ -21905,7 +21934,9 @@ var candidateSelectors = [
 ];
 var candidateSelector = candidateSelectors.join(',');
 
-var matches = Element.prototype.matches || Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
+var matches = typeof Element === 'undefined'
+  ? function () {}
+  : Element.prototype.matches || Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
 
 function tabbable(el, options) {
   options = options || {};
@@ -22059,7 +22090,7 @@ function UntouchabilityChecker(elementDocument) {
 // getComputedStyle accurately reflects `visibility: hidden` of ancestors
 // but not `display: none`, so we need to recursively check parents.
 UntouchabilityChecker.prototype.hasDisplayNone = function hasDisplayNone(node, nodeComputedStyle) {
-  if (node === this.doc.documentElement) return false;
+  if (node.nodeType !== Node.ELEMENT_NODE) return false;
 
     // Search for a cached result.
     var cached = find(this.cache, function(item) {
